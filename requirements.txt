@@ -1,1 +1,2 @@
 flask==0.11.1
+flask_sslify==0.1.5
