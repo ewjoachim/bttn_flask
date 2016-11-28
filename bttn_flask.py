@@ -26,6 +26,6 @@ def get():
 
 @app.route("/set")
 def set():
-    with open(file, "r") as f:
+    with open(file, "w") as f:
         f.write("true")
     return "true"
