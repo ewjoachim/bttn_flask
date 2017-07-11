@@ -1,36 +1,22 @@
 from flask import Flask, Response
 from flask_sslify import SSLify
-
+from datetime import date
+import json
 
 app = Flask(__name__)
 
 SSLify(app)
 
-file = "bla.txt"
 
+@app.route("/<continent>/<region>/<int:year>/<int:month>/<int:day>")
+def get(continent, region, year, month, day):
+    cal_class = getattr(
+        __import__("workalendar.{}".format(continent), fromlist=[region]),
+        region)
+    d = date(year, month, day)
 
-def empty():
-    with open(file, "w"):
-        pass
+    holiday = cal_class().is_working_day(d)
 
-empty()
-
-
-@app.route("/get")
-def get():
-    with open(file, "r") as f:
-        c = f.read()
-    empty()
-    resp = Response(c)
-    resp.headers['Access-Control-Allow-Origin'] = '*'
-    return resp
-
-
-@app.route("/set")
-def set():
-    with open(file, "w") as f:
-        f.write("true")
-
-    resp = Response("true")
+    resp = Response(json.dumps(holiday))
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
